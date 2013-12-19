@@ -1,0 +1,49 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=4805
+
+DESCRIPTION
+The built-in insert mode completion completes single words, and one can copy
+the words following the previous expansion one-by-one. (But that is cumbersome
+and doesn't scale when there are many alternatives.)
+This plugin offers completion of sequences of words, i.e. everything separated
+by whitespace, non-keyword characters or the start / end of line, based on the
+typed first letter of each word. With this, one can quickly complete entire
+phrases; for example, "imc" completes to "insert mode completion", and "/ulb"
+completes to "/usr/local/bin".
+
+SEE ALSO
+- CamelCaseComplete (vimscript #3915) provides a similar completion, but the
+  anchor characters must be the start fragments of CamelCaseWords or
+  underscore_words.
+- Check out the CompleteHelper.vim plugin page (vimscript #3914) for a full
+  list of insert mode completions powered by it.
+
+USAGE
+In insert mode, type all initial letters of the requested phrase, and invoke
+the multi-word completion via CTRL-X w.
+You can then search forward and backward via CTRL-N / CTRL-P, as usual.
+
+CTRL-X w                Find matches for multiple words which begin with the
+                        typed letters in front of the cursor. The 'ignorecase'
+                        and 'smartcase' settings apply. If no matches were
+                        found that way, a case-insensitive search is tried as
+                        a fallback. (So, unless you care about a minimum
+                        number of matches and search speed, you can be sloppy
+                        with the case of the typed letters.)
+                        The sequence of words can span multiple lines;
+                        newlines are removed in the completion results.
+
+                        Non-alphabetic keyword characters (e.g. numbers, "_"
+                        in the default 'iskeyword' setting) can be inserted
+                        into the completion base to force inclusion of these,
+                        e.g. both "mf" and "mf_b" complete to "my foo_bar",
+                        but the latter excludes "my foobar" and "my foo_quux".
+                        An alphabetic anchor following a non-alphabetic anchor
+                        must match immediately after the non-alphabetic
+                        letter, not in the next word. Thus, mentally parse the
+                        base "mf_b" as "m", "f", "_b".
+                        In addition, non-alphabetic keyword characters match
+                        at a start of a word, too. For example, "f2s" matches
+                        both "foobar 2000 system" ("2" matching like an
+                        alphabetic character) and "foo2sam" ("2" matching
+                        according to the special rule for non-alphabetic
+                        characters).

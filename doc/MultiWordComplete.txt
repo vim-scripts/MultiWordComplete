@@ -1,0 +1,137 @@
+*MultiWordComplete.txt*	Insert mode completion that completes a sequence of words based on anchor characters for each word.
+
+		    MULTI WORD COMPLETE    by Ingo Karkat
+						       *MultiWordComplete.vim*
+description			|MultiWordComplete-description|
+usage				|MultiWordComplete-usage|
+installation			|MultiWordComplete-installation|
+configuration			|MultiWordComplete-configuration|
+limitations			|MultiWordComplete-limitations|
+known problems			|MultiWordComplete-known-problems|
+todo				|MultiWordComplete-todo|
+history				|MultiWordComplete-history|
+
+==============================================================================
+DESCRIPTION				       *MultiWordComplete-description*
+
+The built-in insert mode completion completes single words, and one can copy
+the words following the previous expansion one-by-one. (But that is cumbersome
+and doesn't scale when there are many alternatives.)
+This plugin offers completion of sequences of words, i.e. everything separated
+by whitespace, non-keyword characters or the start / end of line, based on the
+typed first letter of each word. With this, one can quickly complete entire
+phrases; for example, "imc" completes to "insert mode completion", and "/ulb"
+completes to "/usr/local/bin".
+
+SEE ALSO								     *
+
+- CamelCaseComplete (vimscript #3915) provides a similar completion, but the
+  anchor characters must be the start fragments of CamelCaseWords or
+  underscore_words.
+- CustomKeywordComplete (vimscript #0000) provides a similar completion with
+  arbitrary anchors inside a single word.
+- Check out the |CompleteHelper.vim| plugin page (vimscript #3914) for a full
+  list of insert mode completions powered by it.
+
+==============================================================================
+USAGE						     *MultiWordComplete-usage*
+
+In insert mode, type all initial letters of the requested phrase, and invoke
+the multi-word completion via CTRL-X w.
+You can then search forward and backward via CTRL-N / CTRL-P, as usual.
+								  *i_CTRL-W_w*
+CTRL-X w		Find matches for multiple words which begin with the
+			typed letters in front of the cursor. The 'ignorecase'
+			and 'smartcase' settings apply. If no matches were
+			found that way, a case-insensitive search is tried as
+			a fallback. (So, unless you care about a minimum
+			number of matches and search speed, you can be sloppy
+			with the case of the typed letters.)
+			The sequence of words can span multiple lines;
+			newlines are removed in the completion results.
+
+			Non-alphabetic keyword characters (e.g. numbers, "_"
+			in the default 'iskeyword' setting) can be inserted
+			into the completion base to force inclusion of these,
+			e.g. both "mf" and "mf_b" complete to "my foo_bar",
+			but the latter excludes "my foobar" and "my foo_quux".
+			An alphabetic anchor following a non-alphabetic anchor
+			must match immediately after the non-alphabetic
+			letter, not in the next word. Thus, mentally parse the
+			base "mf_b" as "m", "f", "_b".
+			In addition, non-alphabetic keyword characters match
+			at a start of a word, too. For example, "f2s" matches
+			both "foobar 2000 system" ("2" matching like an
+			alphabetic character) and "foo2sam" ("2" matching
+			according to the special rule for non-alphabetic
+			characters).
+
+==============================================================================
+INSTALLATION				      *MultiWordComplete-installation*
+
+This script is packaged as a |vimball|. If you have the "gunzip" decompressor
+in your PATH, simply edit the *.vmb.gz package in Vim; otherwise, decompress
+the archive first, e.g. using WinZip. Inside Vim, install by sourcing the
+vimball or via the |:UseVimball| command. >
+    vim MultiWordComplete*.vmb.gz
+    :so %
+To uninstall, use the |:RmVimball| command.
+
+DEPENDENCIES				      *MultiWordComplete-dependencies*
+
+- Requires Vim 7.0 or higher.
+- Requires the |CompleteHelper.vim| plugin (vimscript #3914).
+
+==============================================================================
+CONFIGURATION				     *MultiWordComplete-configuration*
+
+For a permanent configuration, put the following commands into your |vimrc|:
+
+		 *b:MultiWordComplete_complete* *g:MultiWordComplete_complete*
+Analoguous to the 'complete' option, you can specify which buffers will be
+scanned for completion candidates. Currently, '.' (current buffer), 'w'
+(buffers from other windows), and 'b' (other listed buffers) are supported. >
+    let g:MultiWordComplete_complete = '.,w,b'
+The global setting can be overridden for a particular buffer
+(b:MultiWordComplete_complete).
+
+					   *g:MultiWordComplete_FindStartMark*
+To disable the removal of the (mostly useless) completion base when aborting
+with <Esc> while there are no matches: >
+    let g:MultiWordComplete_FindStartMark = ''
+<
+						     *MultiWordComplete-remap*
+If you want to use a different mapping, map your keys to the
+<Plug>(MultiWordComplete) mapping target _before_ sourcing the script (e.g.
+in your |vimrc|): >
+    imap <C-x>w <Plug>(MultiWordComplete)<Plug>(MultiWordPostComplete)
+<
+==============================================================================
+LIMITATIONS				       *MultiWordComplete-limitations*
+
+KNOWN PROBLEMS				    *MultiWordComplete-known-problems*
+
+TODO						      *MultiWordComplete-todo*
+
+IDEAS						     *MultiWordComplete-ideas*
+
+- Allow '.' wildcard for a single and '*' for multiple words.
+- When whitespace before base, include trailing non-keywords in matches, else
+  when non-keywords before base, stop at last keyword character in matches?
+
+==============================================================================
+HISTORY						   *MultiWordComplete-history*
+
+1.00	19-Dec-2013
+First published version.
+
+0.01	26-Feb-2010
+Started development.
+
+==============================================================================
+Copyright: (C) 2010-2013 Ingo Karkat
+The VIM LICENSE applies to this plugin; see |copyright|.
+
+Maintainer:	Ingo Karkat <ingo@karkat.de>
+==============================================================================
+ vim:tw=78:ts=8:ft=help:norl:
